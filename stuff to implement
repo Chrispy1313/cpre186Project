@@ -23,7 +23,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Timer;
+import javax.swing.Timer;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -37,14 +37,15 @@ public class Stuff extends JPanel implements ActionListener {
 		
 		super.paintComponent(g);
 		g.setColor(Color.BLUE);
-		g.fillRect(100, 20, 20, 30); //will use x and y later
-		
+		g.fillRect(x, 20, 20, 30); //will use x and y later
+		time.start();
 		
 	}
 	
 	public void actionPerformed(ActionEvent e){
 		x=x+velX;
 		y=y+velY;
+		repaint();
 	}
 	
 	
