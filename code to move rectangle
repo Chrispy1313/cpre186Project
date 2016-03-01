@@ -33,33 +33,24 @@ public class Stuff extends JPanel implements ActionListener, KeyListener {
 		y=y+velY;
 		repaint();
 	}
-	public void up(){
-		velY=-1;
-	}
-	public void down(){
-		velY=1;
-		}
-	public void left(){
-		velX=-1;
-	}
-	public void right(){
-		velX=1;
-	}
-		
 	
 	public void keyPressed(KeyEvent e){
 		int a=e.getKeyCode();
 		if(a==KeyEvent.VK_LEFT){
-			left();
+			velX=-1;
+			
 		}
 		if(a==KeyEvent.VK_RIGHT){
-			right();
+			velX=1;
+			
 		}
 		if(a==KeyEvent.VK_DOWN){
-			down();
+			velY=1;
+			
 		}
 		if(a==KeyEvent.VK_UP){
-			up();
+			velY=-1;
+			
 		}
 	
 	}
