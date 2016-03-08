@@ -91,10 +91,14 @@ public void keyTyped(KeyEvent e){
 }
 public void keyReleased(KeyEvent e){
 	int a=e.getKeyCode();
-	if(a==KeyEvent.VK_DOWN||a==KeyEvent.VK_UP){
+	if(a==KeyEvent.VK_DOWN&&velY>0){//prevents unwanted stops by checking direction before setting value to 0
 	velY=0;}
-	if(a==KeyEvent.VK_LEFT||a==KeyEvent.VK_RIGHT){
+	if(a==KeyEvent.VK_UP&&velY<0){
+		velY=0;}
+	if(a==KeyEvent.VK_LEFT&&velX<0){
 	velX=0;}
+	if(a==KeyEvent.VK_RIGHT&&velX>0){
+		velX=0;}
 	if(a==KeyEvent.VK_SPACE){  //prevents continuous firing without releasing key
 		firing=false;	}
 }
