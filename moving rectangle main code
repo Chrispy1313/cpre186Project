@@ -13,6 +13,7 @@ import javax.swing.Timer;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+@SuppressWarnings("serial")
 public class Stuff extends JPanel implements ActionListener, KeyListener {
 	
 	Timer time= new Timer(5, this); //5 milliseconds, action listener
@@ -91,7 +92,7 @@ public void keyTyped(KeyEvent e){
 }
 public void keyReleased(KeyEvent e){
 	int a=e.getKeyCode();
-	if(a==KeyEvent.VK_DOWN&&velY>0){//prevents unwanted stops by checking direction before setting value to 0
+	if(a==KeyEvent.VK_DOWN&&velY>0){//prevents unwanted stops by checking direction upon key release before setting value to 0
 	velY=0;}
 	if(a==KeyEvent.VK_UP&&velY<0){
 		velY=0;}
