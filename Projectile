@@ -1,0 +1,55 @@
+package tutorial;
+
+import java.awt.Color;
+import java.awt.Graphics;
+
+public class Projectile {
+	int x=0, velX=0, y=0,velY=0;
+	boolean delete=false;
+	
+	public Projectile(Stuff s){
+		x=s.getx();
+		y=s.gety();
+		if(s.getVelX()>0){
+			velX=2;
+		}
+		else if(s.getVelX()<0){
+			velX=-2;
+		}
+		else{
+			velX=0;
+		}
+		if(s.getVelY()>0){
+			velY=2;
+		}
+		else if(s.getVelY()<0){
+			velY=-2;
+		}
+		else{
+			velY=0;
+		}
+		
+	}
+	
+	public void update(Graphics g){
+		g.setColor(Color.RED);
+		x=x+velX;
+		y=y+velY;
+		if(velX!=0||velY!=0){
+			g.fillOval(x, y, 10, 5);
+		}
+		if((x<=600&&x>=0)&&(y<=400&&y>=0)){
+			
+		}
+		else{
+			delete=true;
+		}
+		
+			
+		
+	}
+	public boolean shouldDelete(){
+		return delete;
+	}
+	
+}
