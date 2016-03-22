@@ -1,0 +1,18 @@
+package Main;
+
+import java.applet.*;
+import java.net.*;
+public class Music {
+public static void main(String[] args) {
+  try {
+     AudioClip clip = Applet.newAudioClip(
+                    new URL("file:C:/Users/Brandon/Downloads/8_Bit_Rush_Actually_Final_converted.wav"));
+     clip.play();
+  } catch (MalformedURLException murle) {
+  murle.printStackTrace();
+}}}
+
+//install libarys
+//jl1.0.1.jar
+//mp3spi1.9.5.jar
+//trionus_share.jar
