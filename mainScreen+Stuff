@@ -1,0 +1,246 @@
+package platformer1;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+
+public class mainScreen extends JPanel implements ActionListener, KeyListener {
+
+	public static void main(String[] args) {
+		
+		mainScreen b = new mainScreen();
+		b.run();
+		
+	}
+	
+	private Stuff sprite;	//TODO change name of sprite class here
+	private Animated a;
+	private ScreenManager s;
+	private Image bg;
+	Timer time; //5 milliseconds, action listener
+	int x=0, velX=0, y=0,velY=0;
+	boolean firing=false;
+	ArrayList<Projectile> projectiles=new ArrayList<Projectile>();
+	
+	public mainScreen(){
+		addKeyListener(this);
+		setFocusable(true);
+		setFocusTraversalKeysEnabled(false);
+		time= new Timer(5, this);
+		time.start();
+		
+	}
+	private static final DisplayMode modes1[] = {
+			new DisplayMode(800,600,32,0),			
+			new DisplayMode(800,600,24,0),
+			new DisplayMode(800,600,16,0),
+			new DisplayMode(640,480,32,0),
+			new DisplayMode(640,480,24,0),
+			new DisplayMode(640,480,16,0),
+			
+	};
+
+	// load images and add scenes
+	public void loadImages(){
+		bg = new ImageIcon("X:\\cpre186\\Chrysanthemum.jpg").getImage();
+	/*	Image image1 = new ImageIcon("X:\\cpre186\\Chrysanthemum.jpg").getImage();
+		Image image2 = new ImageIcon("X:\\cpre186\\Desert.jpg").getImage();
+		//TODO will have to change the routes to get pictures and things 
+		a = new Animated();
+		a.addScene(image1, 250);
+		a.addScene(image2, 250);*/// can uncomment this section later
+		//TODO as a result will need to change the animated scenes too. 
+		
+		//sprite = new Stuff(); //TODO a = the image that is the sprite and change sprite class name
+		
+		
+	}
+	
+	//main method called from main
+	public void run(){
+		s = new ScreenManager();
+		try{
+			DisplayMode dm = s.findFirstCompatibleMode(modes1);
+			s.setFullScreen(dm);
+			loadImages();
+			movieLoop();
+		}finally{
+			s.restoreScreen();
+		}
+	}
+	
+	// play movie
+	public void movieLoop(){
+		long startingTime = System.currentTimeMillis();
+		long cumTime = startingTime;
+		while(cumTime - startingTime < 5000){
+			long timePassed = System.currentTimeMillis() - cumTime;
+			cumTime += timePassed;
+			//update(timePassed); // TODO updates the sprite movement 
+			
+			// draw and update the screen
+			Graphics2D g = s.getGraphics();
+			draw(g);
+			g.dispose();
+			s.update();
+			
+			try{
+				Thread.sleep(20);
+			}catch(Exception ex){}
+			
+		}
+	}
+	
+	//draws graphics
+	public void draw(Graphics g){
+		g.drawImage(bg, 0, 0, null);
+		//g.drawImage(sprite.getImage(), Math.round(sprite.getX()), Math.round(sprite.getY()), null);
+		//TODO may need to change method names in previous line
+		super.paintComponent(g);
+		g.setColor(Color.BLUE);
+		g.fillRect(x, y, 20, 30); //will use x and y later
+		for(int i=0; i<projectiles.size();i++){
+			projectiles.get(i).update(g);
+		}
+		for(int i=0; i<projectiles.size();i++){
+			if(projectiles.get(i).shouldDelete()){
+				projectiles.remove(i);
+			}
+		}
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		int a=e.getKeyCode();
+		if(a==KeyEvent.VK_LEFT){
+			velX=-1;
+			
+		}
+		if(a==KeyEvent.VK_RIGHT){
+			velX=1;
+			
+		}
+		if(a==KeyEvent.VK_DOWN){
+			velY=1;
+			
+		}
+		if(a==KeyEvent.VK_UP){
+			velY=-1;
+			
+		}
+		if(a==KeyEvent.VK_SPACE && firing==false){
+			projectiles.add(new Projectile(this));
+			firing=true;
+		}
+	
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		int a=e.getKeyCode();
+		if(a==KeyEvent.VK_DOWN&&velY>0){//prevents unwanted stops by checking direction upon key release before setting value to 0
+		velY=0;}
+		if(a==KeyEvent.VK_UP&&velY<0){
+			velY=0;}
+		if(a==KeyEvent.VK_LEFT&&velX<0){
+		velX=0;}
+		if(a==KeyEvent.VK_RIGHT&&velX>0){
+			velX=0;}
+		if(a==KeyEvent.VK_SPACE){  //prevents continuous firing without releasing key
+			firing=false;	}
+	}
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		if(x<=600&&x>=0){
+			x=x+velX;
+		}
+		if(y<=400&&y>=0){
+			y=y+velY;
+		}
+		if(x>580){ //these if statements keep it within the screen
+			x=580;
+		}
+		if(x<0){
+			x=0;
+		}
+		if(y>340){
+			y=340;
+		}
+		if(y<0){
+			y=0;
+		}
+		repaint();
+	}
+	
+	public int getx(){
+		return x;
+	}
+	public int gety(){
+		return y;
+	}
+	public int getVelX(){
+		return velX;
+	}
+	public int getVelY(){
+		return velY;
+	}
+		
+public void paintComponent(Graphics g){
+		
+		super.paintComponent(g);
+		g.setColor(Color.BLUE);
+		g.fillRect(x, y, 20, 30); //will use x and y later
+		for(int i=0; i<projectiles.size();i++){
+			projectiles.get(i).update(g);
+		}
+		for(int i=0; i<projectiles.size();i++){
+			if(projectiles.get(i).shouldDelete()){
+				projectiles.remove(i);
+			}
+		}
+	}
+	//TODO update method for the sprite. maybe need to change names or replace with a better one
+	/*public void update(long timePassed){
+		if(sprite.getX() < 0){
+			sprite.setVelocityX(Math.abs(sprite.getVelocityX()));
+		}
+		else if(sprite.getX() + sprite.getWidth() > s.getWidth()){
+			sprite.setVelocityX(-Math.abs(sprite.getVelocityX()));
+		}
+		
+		if(sprite.getY() < 0){
+			sprite.setVelocityY(Math.abs(sprite.getVelocityY()));
+		}
+		else if(sprite.getY() + sprite.getHeight() > s.getHeight()){
+			sprite.setVelocityY(-Math.abs(sprite.getVelocityY()));
+		}
+		
+		sprite.update(timePassed);
+	}
+	*/
+}
+
+
+
+
