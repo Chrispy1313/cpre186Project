@@ -1,0 +1,117 @@
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+import java.lang.reflect.InvocationTargetException;
+import javax.swing.ImageIcon;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+
+public class Input extends JPanel implements ActionListener, KeyListener {
+
+	private MovingRectangle m;
+	private Image background;
+	private Timer time;
+	public Input(MovingRectangle rect){
+		background=new ImageIcon("X:\\flower.jpg").getImage();;
+		m=rect;
+		Timer time= new Timer(5, this);
+		time.start();
+		addKeyListener(this);
+		setFocusable(true);
+		setFocusTraversalKeysEnabled(false);
+	}
+	
+	public void keyTyped(KeyEvent e){
+		
+	}
+	
+	public void keyReleased(KeyEvent e){
+		int a=e.getKeyCode();
+		if(a==KeyEvent.VK_DOWN&&m.velY>0){//prevents unwanted stops by checking direction upon key release before setting value to 0
+		m.velY=0;}
+		if(a==KeyEvent.VK_UP&&m.velY<0){
+			m.velY=0;}
+		if(a==KeyEvent.VK_LEFT&&m.velX<0){
+		m.velX=0;}
+		if(a==KeyEvent.VK_RIGHT&&m.velX>0){
+			m.velX=0;}
+		if(a==KeyEvent.VK_SPACE){  //prevents continuous firing without releasing key
+			m.firing=false;	}
+	}
+	
+	public void keyPressed(KeyEvent e){
+		int a=e.getKeyCode();
+		if(a==KeyEvent.VK_LEFT){
+			m.velX=-2;
+			
+		}
+		if(a==KeyEvent.VK_RIGHT){
+			m.velX=2;
+			
+		}
+		if(a==KeyEvent.VK_DOWN){
+			m.velY=2;
+			
+		}
+		if(a==KeyEvent.VK_UP){
+			m.velY=-2;
+			
+		}
+		if(a==KeyEvent.VK_SPACE && m.firing==false){
+			m.projectiles.add(new Projectile(m));
+			m.firing=true;
+			 
+		}
+	
+	}
+	
+	public void actionPerformed(ActionEvent e){
+		if(m.x<=1600&&m.x>=0){
+			m.x=m.x+m.velX;
+		}
+		if(m.y<=900&&m.y>=0){
+			m.y=m.y+m.velY;
+		}
+		if(m.x>1580){ //these if statements keep it within the screen
+			m.x=1580;
+		}
+		if(m.x<0){
+			m.x=0;
+		}
+		if(m.y>840){
+			m.y=840;
+		}
+		if(m.y<0){
+			m.y=0;
+		}
+		act();
+	}
+	
+	public void act(){
+		repaint();
+		
+		
+	}
+public void paintComponent(Graphics g){
+	    
+		super.paintComponent(g);
+		g.drawImage(background,0,0,null);
+		g.setColor(Color.BLUE);
+		g.fillRect(m.x, m.y, 30, 20); //will use x and y later
+		for(int i=0; i<m.projectiles.size();i++){
+			m.projectiles.get(i).update(g);
+		}
+		for(int i=0; i<m.projectiles.size();i++){
+			if(m.projectiles.get(i).shouldDelete()){
+				m.projectiles.remove(i);
+			}
+		}
+	}
+	
+}
