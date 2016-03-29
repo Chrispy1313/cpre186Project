@@ -102,6 +102,7 @@ public void paintComponent(Graphics g){
 	    
 		super.paintComponent(g);
 		g.drawImage(background,0,0,null);
+		//draw image of health
 		g.setColor(Color.BLUE);
 		g.fillRect(m.x, m.y, 30, 20); //will use x and y later
 		for(int i=0; i<m.projectiles.size();i++){
