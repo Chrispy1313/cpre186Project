@@ -1,0 +1,38 @@
+import java.awt.*;
+import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+import java.lang.reflect.InvocationTargetException;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+
+public class NewMain {
+	private ScreenManager screen;
+	public static void main(String[] args) {
+		Image mainMenu;
+		Image background =new ImageIcon("X:\\flower.jpg").getImage();;
+		
+		JFrame jf = new JFrame();
+		jf.setTitle("Let's go!");
+		jf.setSize(1600,900);
+		jf.setVisible(true);
+		jf.setResizable(false);
+		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		
+		
+		//input starts here
+		MovingRectangle s= new MovingRectangle();
+		Input in=new Input(s);
+		jf.add(in);
+		//jf.drawImage(background,0,0,null);
+		
+	}
+
+}
