@@ -1,0 +1,132 @@
+package platformer1;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+
+import javax.swing.Timer;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+@SuppressWarnings("serial")
+public class Stuff extends JPanel implements ActionListener, KeyListener {
+	
+	Timer time= new Timer(5, this); //5 milliseconds, action listener
+	int x=0, velX=0, y=0,velY=0;
+	boolean firing=false;
+	ArrayList<Projectile> projectiles=new ArrayList<Projectile>();
+	public Stuff(){
+		time.start();
+		addKeyListener(this);
+		setFocusable(true);
+		setFocusTraversalKeysEnabled(false);
+	}
+	public void paintComponent(Graphics g){
+		
+		super.paintComponent(g);
+		g.setColor(Color.BLUE);
+		g.fillRect(x, y, 20, 30); //will use x and y later
+		for(int i=0; i<projectiles.size();i++){
+			projectiles.get(i).update(g);
+		}
+		for(int i=0; i<projectiles.size();i++){
+			if(projectiles.get(i).shouldDelete()){
+				projectiles.remove(i);
+			}
+		}
+	}
+	
+	public void actionPerformed(ActionEvent e){
+		if(x<=600&&x>=0){
+			x=x+velX;
+		}
+		if(y<=400&&y>=0){
+			y=y+velY;
+		}
+		if(x>580){ //these if statements keep it within the screen
+			x=580;
+		}
+		if(x<0){
+			x=0;
+		}
+		if(y>340){
+			y=340;
+		}
+		if(y<0){
+			y=0;
+		}
+		repaint();
+	}
+	
+	public void keyPressed(KeyEvent e){
+		int a=e.getKeyCode();
+		if(a==KeyEvent.VK_LEFT){
+			velX=-1;
+			
+		}
+		if(a==KeyEvent.VK_RIGHT){
+			velX=1;
+			
+		}
+		if(a==KeyEvent.VK_DOWN){
+			velY=1;
+			
+		}
+		if(a==KeyEvent.VK_UP){
+			velY=-1;
+			
+		}
+		if(a==KeyEvent.VK_SPACE && firing==false){
+			//projectiles.add(new Projectile(this));
+			firing=true;
+		}
+	
+	}
+public void keyTyped(KeyEvent e){
+	
+}
+public void keyReleased(KeyEvent e){
+	int a=e.getKeyCode();
+	if(a==KeyEvent.VK_DOWN&&velY>0){//prevents unwanted stops by checking direction upon key release before setting value to 0
+	velY=0;}
+	if(a==KeyEvent.VK_UP&&velY<0){
+		velY=0;}
+	if(a==KeyEvent.VK_LEFT&&velX<0){
+	velX=0;}
+	if(a==KeyEvent.VK_RIGHT&&velX>0){
+		velX=0;}
+	if(a==KeyEvent.VK_SPACE){  //prevents continuous firing without releasing key
+		firing=false;	}
+}
+public int getx(){
+	return x;
+}
+public int gety(){
+	return y;
+}
+public int getVelX(){
+	return velX;
+}
+public int getVelY(){
+	return velY;
+}
+	
+	
+	public static void main(String[] args) {
+		Stuff s= new Stuff();
+		
+		JFrame jf = new JFrame();
+		jf.setTitle("Let's go!");
+		jf.setSize(600,400);
+		jf.setVisible(true);
+		jf.setResizable(false);
+		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		jf.add(s);
+		
+	}
+
+}
