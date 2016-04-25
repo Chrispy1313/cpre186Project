@@ -10,18 +10,19 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class Input extends JPanel implements ActionListener, KeyListener {
-
+	private JFrame jfr;
 	private MovingRectangle m;
 	private boolean jump=false;
 	private boolean collision=false;
-	public boolean nextLevel=false;
-	public boolean gameOver=false;
+	
 	private Image background;
 	private Image playerForward;
 	//private Image playerBackward;
@@ -30,12 +31,14 @@ public class Input extends JPanel implements ActionListener, KeyListener {
 	private Rectangle objectCollided;
 	private ArrayList<MovingRectangle> platforms;
 	private ArrayList<MovingRectangle> enemies;
-	public Input(MovingRectangle rect, ArrayList<MovingRectangle> platform, ArrayList<MovingRectangle> enemy){
+	private ArrayList<MovingRectangle> food;
+	public Input(MovingRectangle rect, ArrayList<MovingRectangle> platform, ArrayList<MovingRectangle> enemy,ArrayList<MovingRectangle> food, JFrame jframe){
 		//background=new ImageIcon("X:\\flower.jpg").getImage();;
 		//playerForward=new ImageIcon("X:\\pause.jpg").getImage();;
-		
+		jfr=jframe;
 		platforms=platform;
 		enemies=enemy;
+		this.food=food;
 		m=rect;
 		Timer time= new Timer(5, this);
 		time.start();
@@ -101,7 +104,7 @@ public class Input extends JPanel implements ActionListener, KeyListener {
 		}
 		for(MovingRectangle r: enemies){
 			if(m.bounds().intersects(r.bounds())){
-				gameOver=true;
+				NewMain.gameOver=true;
 				objectCollided=r.bounds();
 				break;
 			}
@@ -196,21 +199,18 @@ public void paintComponent(Graphics g){
 		
 		g.fillRect(m.x, m.y,m.width, m.height); //will use x and y later
 		
-		if(gameOver){
-			for(MovingRectangle r: platforms){
-				g.setColor(Color.MAGENTA);
-				g.fillRect(r.x, r.y, r.width, r.height);
-				
-			}
-		}
-		else{
 		for(MovingRectangle r: platforms){
 			g.setColor(Color.green);
 			g.fillRect(r.x, r.y, r.width, r.height);
 			
-		}}
+		}
 		for(MovingRectangle e:enemies){
 			g.setColor(Color.RED);
+			g.fillRect(e.x, e.y, e.width, e.height);
+		}
+		
+		for(MovingRectangle e:food){
+			g.setColor(Color.YELLOW);
 			g.fillRect(e.x, e.y, e.width, e.height);
 		}
 		
@@ -223,15 +223,54 @@ public void paintComponent(Graphics g){
 			}
 		}
 		
-		if(nextLevel){
+		if(NewMain.nextLevel){
 			
 			
 		}
-		if(gameOver){
+		if(NewMain.gameOver){
 			
 			this.setFocusable(false);
 			this.setVisible(false);
-
+			jfr.dispose();
+			System.out.println("Game Over");
+			/*Scanner in= new Scanner(System.in);
+			String reply=in.nextLine();
+			
+			if(reply.equals("r")){
+				
+				NewMain.gameOver=false;
+				jfr.dispose();
+				JFrame jf = new JFrame();
+				jf.setTitle("Carl's Adventure!");
+				jf.setSize(1600,900);
+				jf.setVisible(true);
+				jf.setResizable(false);
+				jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				
+				
+				
+				//input starts here
+				MovingRectangle s= new MovingRectangle(20,20,40,20); //x,y,width,height
+				ArrayList<MovingRectangle> platforms= new ArrayList<MovingRectangle>();
+				ArrayList<MovingRectangle> enemies= new ArrayList<MovingRectangle>();
+				platforms.add(new MovingRectangle(100,100, 30,30));
+				platforms.add(new MovingRectangle(500,100, 30,300));
+				platforms.add(new MovingRectangle(100,500, 30,30));
+				platforms.add(new MovingRectangle(1000,1500, 30,30));
+				platforms.add(new MovingRectangle(150,2000, 30,30));
+				platforms.add(new MovingRectangle(1000,100, 30,30));
+				enemies.add(new MovingRectangle(200,200, 10,10));
+				enemies.add(new MovingRectangle(100,200, 10,10));
+				enemies.add(new MovingRectangle(200,100, 10,10));
+				enemies.add(new MovingRectangle(300,200, 10,10));
+				
+				Input inp=new Input(s,platforms,enemies,jf);
+				jf.add(inp);
+			}
+			else{
+			jfr.dispose();
+		}
+		in.close();	*/
 		}
 		
 	}
