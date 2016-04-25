@@ -13,7 +13,9 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class NewMain {
-	private ScreenManager screen;
+	public static boolean nextLevel=false;
+	public static boolean gameOver=false;
+	//private ScreenManager screen;
 	public static void main(String[] args) throws InterruptedException {
 		//Image mainMenu;
 		//Image background1 =new ImageIcon("X:\\flower.jpg").getImage();;
@@ -31,6 +33,7 @@ public class NewMain {
 		MovingRectangle s= new MovingRectangle(20,20,40,20); //x,y,width,height
 		ArrayList<MovingRectangle> platforms= new ArrayList<MovingRectangle>();
 		ArrayList<MovingRectangle> enemies= new ArrayList<MovingRectangle>();
+		ArrayList<MovingRectangle> food= new ArrayList<MovingRectangle>();
 		platforms.add(new MovingRectangle(100,100, 30,30));
 		platforms.add(new MovingRectangle(500,100, 30,300));
 		platforms.add(new MovingRectangle(100,500, 30,30));
@@ -41,16 +44,13 @@ public class NewMain {
 		enemies.add(new MovingRectangle(100,200, 10,10));
 		enemies.add(new MovingRectangle(200,100, 10,10));
 		enemies.add(new MovingRectangle(300,200, 10,10));
-		
-		Input in=new Input(s,platforms,enemies);
+		food.add(new MovingRectangle(600, 400, 5,5));
+		food.add(new MovingRectangle(200, 250, 5,5));
+		Input in=new Input(s,platforms,enemies,food,jf);
 		jf.add(in);
-		while(!in.gameOver){
-			
-		}
-		jf.setVisible(false);
-		jf.remove(in);
-		jf.dispose();
-		System.out.println("Game Over");
+		
+		
+	
 		//jf.setBackground(Color.BLUE);
 		//jf.drawImage(background,0,0,null);
 		
