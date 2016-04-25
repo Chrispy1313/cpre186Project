@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -8,6 +9,8 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -15,10 +18,24 @@ import javax.swing.Timer;
 public class Input extends JPanel implements ActionListener, KeyListener {
 
 	private MovingRectangle m;
+	private boolean jump=false;
+	private boolean collision=false;
+	public boolean nextLevel=false;
+	public boolean gameOver=false;
 	private Image background;
+	private Image playerForward;
+	//private Image playerBackward;
 	private Timer time;
-	public Input(MovingRectangle rect){
-		background=new ImageIcon("X:\\flower.jpg").getImage();;
+	private int jumpStart, jumpEnd;
+	private Rectangle objectCollided;
+	private ArrayList<MovingRectangle> platforms;
+	private ArrayList<MovingRectangle> enemies;
+	public Input(MovingRectangle rect, ArrayList<MovingRectangle> platform, ArrayList<MovingRectangle> enemy){
+		//background=new ImageIcon("X:\\flower.jpg").getImage();;
+		//playerForward=new ImageIcon("X:\\pause.jpg").getImage();;
+		
+		platforms=platform;
+		enemies=enemy;
 		m=rect;
 		Timer time= new Timer(5, this);
 		time.start();
@@ -36,7 +53,9 @@ public class Input extends JPanel implements ActionListener, KeyListener {
 		if(a==KeyEvent.VK_DOWN&&m.velY>0){//prevents unwanted stops by checking direction upon key release before setting value to 0
 		m.velY=0;}
 		if(a==KeyEvent.VK_UP&&m.velY<0){
-			m.velY=0;}
+			//m.velY=0;
+			jump=false;
+			}
 		if(a==KeyEvent.VK_LEFT&&m.velX<0){
 		m.velX=0;}
 		if(a==KeyEvent.VK_RIGHT&&m.velX>0){
@@ -59,8 +78,9 @@ public class Input extends JPanel implements ActionListener, KeyListener {
 			m.velY=2;
 			
 		}
-		if(a==KeyEvent.VK_UP){
-			m.velY=-2;
+		if(a==KeyEvent.VK_UP &&jump==false){
+			jump=true;
+			
 			
 		}
 		if(a==KeyEvent.VK_SPACE && m.firing==false){
@@ -72,24 +92,93 @@ public class Input extends JPanel implements ActionListener, KeyListener {
 	}
 	
 	public void actionPerformed(ActionEvent e){
-		if(m.x<=1600&&m.x>=0){
-			m.x=m.x+m.velX;
+		for(MovingRectangle r: platforms){
+			if(m.bounds().intersects(r.bounds())){
+				collision=true;
+				objectCollided=r.bounds();
+				break;
+			}
 		}
-		if(m.y<=900&&m.y>=0){
+		for(MovingRectangle r: enemies){
+			if(m.bounds().intersects(r.bounds())){
+				gameOver=true;
+				objectCollided=r.bounds();
+				break;
+			}
+		}
+		if(!collision){
+		
+		if(m.y<=900&&m.y>=0 && jump==false){
+			m.velY=2;
 			m.y=m.y+m.velY;
 		}
-		if(m.x>1580){ //these if statements keep it within the screen
-			m.x=1580;
+		else if(m.y<=900&&m.y>=0 && jump==true){
+			m.velY=-4;
+			m.y=m.y+m.velY;
 		}
-		if(m.x<0){
-			m.x=0;
-		}
+		
 		if(m.y>840){
 			m.y=840;
 		}
 		if(m.y<0){
 			m.y=0;
 		}
+		
+		
+		}else{ //collision happened
+			
+			
+			if(m.y<=900&&m.y>=0 && jump==true ){//&&m.y>objectCollided.y
+				m.velY=-2;
+				m.y=m.y+m.velY;
+			}
+			if(m.y+m.height<objectCollided.y){
+				m.y=objectCollided.y;
+			}
+			else if(m.y>(objectCollided.y+objectCollided.height-10)){
+				m.y=objectCollided.y+objectCollided.height;
+			}
+			
+			
+		
+		}
+		
+		if(!collision){
+		if(m.x<=1600&&m.x>=0){
+			m.x=m.x+m.velX;
+		}
+		
+		if(m.x>1580){ //these if statements keep it within the screen
+			m.x=1580;
+		}
+		if(m.x<0){
+			m.x=0;
+		}
+		}
+		else{ //collision happened
+			if(m.y+m.height<=objectCollided.y+10){
+				m.x+=m.velX;
+			}
+			else if(m.x<objectCollided.x){
+				if(m.y>(objectCollided.y+objectCollided.height-10)){
+					m.x+=m.velX;
+				}
+				else{
+					m.x=objectCollided.x-m.width;
+				}
+			}
+			else if(m.x>objectCollided.x){
+				if(m.y>(objectCollided.y+objectCollided.height-10)){
+					m.x+=m.velX;
+				}
+				else{
+					m.x=objectCollided.x+objectCollided.width;
+				}
+			}
+			
+			
+		}
+		collision=false;
 		act();
 	}
 	
@@ -101,10 +190,30 @@ public class Input extends JPanel implements ActionListener, KeyListener {
 public void paintComponent(Graphics g){
 	    
 		super.paintComponent(g);
-		g.drawImage(background,0,0,null);
-		//draw image of health
+		//.drawImage(background,0,0,null);
+		//g.drawImage(background,m.x ,m.y , null);
 		g.setColor(Color.BLUE);
-		g.fillRect(m.x, m.y, 30, 20); //will use x and y later
+		
+		g.fillRect(m.x, m.y,m.width, m.height); //will use x and y later
+		
+		if(gameOver){
+			for(MovingRectangle r: platforms){
+				g.setColor(Color.MAGENTA);
+				g.fillRect(r.x, r.y, r.width, r.height);
+				
+			}
+		}
+		else{
+		for(MovingRectangle r: platforms){
+			g.setColor(Color.green);
+			g.fillRect(r.x, r.y, r.width, r.height);
+			
+		}}
+		for(MovingRectangle e:enemies){
+			g.setColor(Color.RED);
+			g.fillRect(e.x, e.y, e.width, e.height);
+		}
+		
 		for(int i=0; i<m.projectiles.size();i++){
 			m.projectiles.get(i).update(g);
 		}
@@ -113,6 +222,19 @@ public void paintComponent(Graphics g){
 				m.projectiles.remove(i);
 			}
 		}
+		
+		if(nextLevel){
+			
+			
+		}
+		if(gameOver){
+			
+			this.setFocusable(false);
+			this.setVisible(false);
+
+		}
+		
 	}
 	
+
 }
